@@ -1,6 +1,5 @@
 ### 0FluffTrack 📺
-> The No-API, Zero-Database Media Log.
-> Minimalist tracker from S1E1 to S100E100. Zero accounts. Zero tracking. 100% Local.
+> 0FluffTrack is a zero-dependency, client-side media tracker built for speed and intentionality. Unlike bloated tracking apps that require accounts and scrape your data, 0FluffTrack operates entirely in your browser’s local storage. No APIs, no accounts, no distractions. Just you and your progress.
 ---
 ### ⚡ The Logic
  * Privacy First: No cloud. No scraping. Your data stays in your browser's IndexedDB.
