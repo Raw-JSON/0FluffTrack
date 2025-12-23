@@ -45,6 +45,17 @@ const dbService = {
         });
     },
 
+    // [GemDev] New method to update existing records
+    async updateShow(showData) {
+        const tx = this.db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        return new Promise((resolve, reject) => {
+            const request = store.put(showData); // 'put' updates if key exists
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+    },
+
     async deleteShow(id) {
         const tx = this.db.transaction(STORE_NAME, 'readwrite');
         const store = tx.objectStore(STORE_NAME);
