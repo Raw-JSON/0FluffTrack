@@ -9,10 +9,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const episodeSelect = document.getElementById('episode-select');
     const screenshotInput = document.getElementById('screenshot-input');
     const fileNameDisplay = document.getElementById('file-name-display');
+    
+    // Quick Edit Elements
+    const editOverlay = document.getElementById('edit-overlay');
+    const closeEditBtn = document.getElementById('close-edit');
+    const saveEditBtn = document.getElementById('save-edit');
+    const editSVal = document.getElementById('edit-s-val');
+    const editEVal = document.getElementById('edit-e-val');
+    const quickImageInput = document.getElementById('quick-image-input');
 
     let currentImageBlob = null;
+    let editTargetId = null;
+    let editState = { s: 1, e: 1 };
 
-    // Initialize Select Options
+    // Fill Dropdowns
     for (let i = 1; i <= 20; i++) {
         const opt = document.createElement('option');
         opt.value = `S${i}`;
@@ -26,50 +36,80 @@ document.addEventListener('DOMContentLoaded', async () => {
         episodeSelect.appendChild(opt);
     }
 
-    // Initialize Database
-    try {
-        await dbService.init();
-        renderShows();
-    } catch (err) {
-        console.error("Failed to init DB", err);
-    }
+    await dbService.init();
+    renderShows();
 
-    // Modal Interactions
-    openModalBtn.addEventListener('click', () => modalOverlay.classList.remove('hidden'));
-    closeModalBtn.addEventListener('click', () => {
+    // Add Show Logic
+    openModalBtn.onclick = () => modalOverlay.classList.remove('hidden');
+    closeModalBtn.onclick = () => {
         modalOverlay.classList.add('hidden');
         addShowForm.reset();
         fileNameDisplay.textContent = "No file selected";
         currentImageBlob = null;
-    });
+    };
 
-    // File Handling
-    screenshotInput.addEventListener('change', (e) => {
+    screenshotInput.onchange = (e) => {
         const file = e.target.files[0];
         if (file) {
             fileNameDisplay.textContent = file.name;
             currentImageBlob = file;
         }
-    });
+    };
 
-    // Form Submission
-    addShowForm.addEventListener('submit', async (e) => {
+    addShowForm.onsubmit = async (e) => {
         e.preventDefault();
-
         const showData = {
             title: document.getElementById('show-title').value,
             season: seasonSelect.value,
             episode: episodeSelect.value,
             timestamp: Date.now(),
-            image: currentImageBlob // Store actual Blob
+            image: currentImageBlob
         };
-
         await dbService.addShow(showData);
         closeModalBtn.click();
         renderShows();
-    });
+    };
 
-    // Render Logic
+    // Quick Progress Logic
+    const updateDisplay = () => {
+        editSVal.textContent = editState.s;
+        editEVal.textContent = editState.e;
+    };
+
+    document.getElementById('edit-s-plus').onclick = () => { editState.s++; updateDisplay(); };
+    document.getElementById('edit-s-minus').onclick = () => { if(editState.s > 1) editState.s--; updateDisplay(); };
+    document.getElementById('edit-e-plus').onclick = () => { editState.e++; updateDisplay(); };
+    document.getElementById('edit-e-minus').onclick = () => { if(editState.e > 1) editState.e--; updateDisplay(); };
+
+    closeEditBtn.onclick = () => editOverlay.classList.add('hidden');
+    
+    saveEditBtn.onclick = async () => {
+        const shows = await dbService.getAllShows();
+        const show = shows.find(s => s.id === editTargetId);
+        if (show) {
+            show.season = `S${editState.s}`;
+            show.episode = `E${editState.e}`;
+            show.timestamp = Date.now();
+            await dbService.updateShow(show);
+            renderShows();
+        }
+        editOverlay.classList.add('hidden');
+    };
+
+    // Quick Image Logic
+    quickImageInput.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (file && editTargetId) {
+            const shows = await dbService.getAllShows();
+            const show = shows.find(s => s.id === editTargetId);
+            if (show) {
+                show.image = file;
+                await dbService.updateShow(show);
+                renderShows();
+            }
+        }
+    };
+
     async function renderShows() {
         const shows = await dbService.getAllShows();
         showGrid.innerHTML = '';
@@ -77,35 +117,45 @@ document.addEventListener('DOMContentLoaded', async () => {
         shows.sort((a, b) => b.timestamp - a.timestamp).forEach(show => {
             const card = document.createElement('div');
             card.className = 'card';
-
-            // Convert Blob to URL for preview
             const imageUrl = show.image ? URL.createObjectURL(show.image) : '';
 
             card.innerHTML = `
                 <div class="card-img-container">
-                    ${show.image ? `<img src="${imageUrl}" class="card-img" alt="${show.title}">` : '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#333;">No Screenshot</div>'}
+                    ${show.image ? `<img src="${imageUrl}" class="card-img">` : '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#333;">No Image</div>'}
+                    <button class="img-overlay-btn">📷</button>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">${show.title}</h3>
                     <div class="card-meta">
-                        <span>${show.season} • ${show.episode}</span>
+                        <span class="meta-text">${show.season} • ${show.episode}</span>
                         <button class="btn-delete" data-id="${show.id}">REMOVE</button>
                     </div>
                 </div>
             `;
 
-            // Clean up URLs to prevent memory leaks
             if (show.image) {
-                const img = card.querySelector('img');
+                const img = card.querySelector('.card-img');
                 img.onload = () => URL.revokeObjectURL(imageUrl);
             }
 
-            // Delete action
-            card.querySelector('.btn-delete').addEventListener('click', async (e) => {
-                const id = parseInt(e.target.dataset.id);
-                await dbService.deleteShow(id);
+            // Bind Actions
+            card.querySelector('.btn-delete').onclick = async () => {
+                await dbService.deleteShow(show.id);
                 renderShows();
-            });
+            };
+
+            card.querySelector('.meta-text').onclick = () => {
+                editTargetId = show.id;
+                editState.s = parseInt(show.season.replace('S', '')) || 1;
+                editState.e = parseInt(show.episode.replace('E', '')) || 1;
+                updateDisplay();
+                editOverlay.classList.remove('hidden');
+            };
+
+            card.querySelector('.img-overlay-btn').onclick = () => {
+                editTargetId = show.id;
+                quickImageInput.click();
+            };
 
             showGrid.appendChild(card);
         });
