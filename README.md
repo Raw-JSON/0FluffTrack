@@ -1,37 +1,35 @@
 # 0FluffTrack 📺
 
-**0FluffTrack** is a high-performance, zero-dependency media tracker designed for intentionality and privacy. It transforms your browser into a dedicated cinema library without the bloat of accounts, social feeds, or third-party data scraping.
+**0FluffTrack** is a zero-dependency, local-first media tracker built for speed, privacy, and intentionality. It transforms your browser into a dedicated cinematic library without the bloat of accounts, social feeds, or third-party data scraping.
 
 ---
 
 ### ⚡ The "No-Fluff" Philosophy
-Most trackers are actually marketing tools in disguise. They require accounts to "sync" your data so they can sell your viewing habits. **0FluffTrack** rejects this.
+Most trackers require accounts to "sync" data so they can monitor viewing habits. **0FluffTrack** rejects this model.
 
-* **True Local Storage:** Utilizing the **IndexedDB API**, 0FluffTrack stores your metadata and binary image posters directly in your browser's persistent storage. 
-* **No Third-Party APIs:** We don't call external movie databases. This prevents "data leakage" and ensures the app works offline. You provide the posters; we provide the interface.
-* **Zero Latency:** Built with Vanilla JS and CSS, optimized for smooth 60fps interactions and instant state updates.
-
----
-
-### 🍿 New Features (v2.0)
-* **Cinematic Interface:** A vertical 2:3 aspect ratio grid inspired by modern streaming platforms.
-* **"Watch Next" Logic:** Shifted UX focus from "What did I finish?" to "What is my next goal?"
-* **Anticipatory Steppers:** Automatic Episode-to-Season logic. Changing a season automatically resets the episode count to 1, saving you unnecessary clicks.
-* **Glassmorphism Design:** A minimalist dark-mode UI that puts your media posters front and center.
+* **True Local Storage**: Utilizing the **IndexedDB API**, 0FluffTrack stores metadata and binary image posters directly in your browser's persistent storage.
+* **No Third-Party APIs**: We do not call external movie databases. This ensures your viewing habits are never leaked and the app remains functional without an internet connection.
+* **Zero Latency**: Built with Vanilla JS and CSS, optimized for smooth 60fps interactions and instant state updates.
 
 ---
 
-### 📂 Technical Blueprint
-* `db.js`: A Promise-based wrapper for **IndexedDB**. Handles high-speed CRUD operations for show objects and Blob image storage.
-* `app.js`: The core controller. Manages DOM rendering, "Smart Stepper" logic, and event delegation.
-* `style.css`: A custom CSS architecture utilizing CSS Variables and Flex/Grid for a responsive, desktop-class experience.
+## 📡 Offline & PWA Support
+0FluffTrack is a fully capable **Progressive Web App (PWA)**.
+* **Installation**: Can be "Installed" to your home screen or desktop via the browser's "Add to Home Screen" prompt.
+* **Reliability**: The Service Worker caches all core assets, allowing the app to boot and function with zero internet connection.
+* **SVG-First Branding**: Uses a mathematically perfect SVG icon for maximum clarity across all device resolutions.
 
 ---
 
-### 📄 License
-MIT License. Open source, transparent, and free forever.
+## 📂 Technical Blueprint
+* **db.js**: Promise-based wrapper for **IndexedDB** CRUD operations.
+* **app.js**: Core controller handling DOM rendering, "Watch Next" states, and smart season/episode increments.
+* **style.css**: Minimalist UI architecture utilizing CSS Variables and a 2:3 cinematic grid.
+* **sw.js & manifest.json**: The engine and identity files for offline PWA functionality.
 
 ---
 
-### 🤖 Transparency Note
-Core logic and architectural patterns were generated and refined by **Gemini AI**
+## 📄 License
+MIT License. Open source, transparent, and free from tracking.
+
+---
