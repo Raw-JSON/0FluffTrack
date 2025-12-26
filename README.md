@@ -1,6 +1,6 @@
-> # 0FluffTrack 📺
+# 0FluffTrack 📺
 
-**0FluffTrack** is a zero-dependency, local-first media tracker built for speed, privacy, and intentionality. It transforms your browser into a dedicated cinematic library without the bloat of accounts, social feeds, or third-party data scraping.
+> **0FluffTrack** is a zero-dependency, local-first media tracker built for speed, privacy, and intentionality. It transforms your browser into a dedicated cinematic library without the bloat of accounts, social feeds, or third-party data scraping.
 
 ---
 
