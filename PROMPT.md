@@ -15,6 +15,6 @@ Use the following prompt in any advanced LLM (like Gemini, GPT, or Claude) to re
 
 **UI/UX Specifications:**
 1. **Cinematic Design:** Create a dark-themed, glassmorphic UI. The show grid must use a vertical 2:3 aspect ratio for images to mimic movie posters.
-2. **Watch Next Logic:** The interface should display the 'Upcoming' episode (e.g., S1 • E5) rather than the last completed one.
+2. **Watch Next Label:** Place a small "WATCH NEXT" label above the show title on each card. This signals the user to input the episode they are *about* to watch, rather than the one they finished.
 3. **Smart Steppers:** In the update modal, include increment/decrement buttons for Season and Episode. If the Season is changed, the Episode must automatically reset to 1.
 4. **No-Fluff Branding:** Focus on speed and privacy. No external APIs, no tracking, and no third-party libraries."
