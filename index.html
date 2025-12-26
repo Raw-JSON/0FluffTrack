@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>0FluffTrack | Cinema Media Tracker</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00c49a">
+    <link rel="apple-touch-icon" href="icon-512.png">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,22 +27,15 @@
             <h2>Track New Show</h2>
             <form id="add-show-form">
                 <input type="text" id="show-title" placeholder="Show Title" required>
-                
                 <div class="dropdown-row">
-                    <select id="season-select" required>
-                        <option value="" disabled selected>Season</option>
-                    </select>
-                    <select id="episode-select" required>
-                        <option value="" disabled selected>Episode</option>
-                    </select>
+                    <select id="season-select" required><option value="" disabled selected>Season</option></select>
+                    <select id="episode-select" required><option value="" disabled selected>Episode</option></select>
                 </div>
-
                 <div class="upload-container">
                     <label for="screenshot-input" class="btn-secondary">🖼️ Upload Poster</label>
                     <input type="file" id="screenshot-input" accept="image/*" hidden>
                     <div id="file-name-display" style="margin-top:10px; font-size:0.8rem; color:#aaa;">No file selected</div>
                 </div>
-
                 <div class="modal-actions">
                     <button type="button" id="close-modal" class="btn-text">Cancel</button>
                     <button type="submit" class="btn-primary">Add to Library</button>
@@ -50,7 +48,7 @@
         <div class="modal">
             <h2 style="margin-bottom: 2rem;">Update Progress</h2>
             <div class="stepper-group">
-                <div class="stepper-label">Season</div>
+                <div>Season</div>
                 <div class="stepper-controls">
                     <button class="stepper-btn" id="edit-s-minus">−</button>
                     <span id="edit-s-val" class="stepper-val">1</span>
@@ -58,22 +56,27 @@
                 </div>
             </div>
             <div class="stepper-group">
-                <div class="stepper-label">Episode</div>
+                <div>Episode</div>
                 <div class="stepper-controls">
                     <button class="stepper-btn" id="edit-e-minus">−</button>
                     <span id="edit-e-val" class="stepper-val">1</span>
                     <button class="stepper-btn" id="edit-e-plus">+</button>
                 </div>
             </div>
-            <p style="font-size: 0.75rem; color: #666; margin-top: 1rem; text-align: center;">Tip: Changing season resets episode to 1.</p>
+            <p style="font-size: 0.7rem; color: #666; margin-top: 1rem; text-align: center;">Watch Next will update automatically.</p>
             <div class="modal-actions">
                 <button type="button" id="close-edit" class="btn-text">Cancel</button>
-                <button type="button" id="save-edit" class="btn-primary">Update Progress</button>
+                <button type="button" id="save-edit" class="btn-primary">Update</button>
             </div>
         </div>
     </div>
 
     <script src="db.js"></script>
     <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
 </html>
