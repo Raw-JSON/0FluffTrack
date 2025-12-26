@@ -1,6 +1,6 @@
 # 0FluffTrack 📺
 
-> **0FluffTrack** is a zero-dependency, local-first media tracker built for speed, privacy, and intentionality. It transforms your browser into a dedicated cinematic library without the bloat of accounts, social feeds, or third-party data scraping.
+> **[0FluffTrack](https://raw-json.github.io/0FluffTrack/)** is a zero-dependency, local-first media tracker built for speed, privacy, and intentionality. It transforms your browser into a dedicated cinematic library without the bloat of accounts, social feeds, or third-party data scraping.
 
 ---
 
@@ -30,7 +30,7 @@ Most trackers require accounts to "sync" data so they can monitor viewing habits
 ---
 
 ## 📄 License
-MIT License. Open source, transparent, and free from tracking.
+[MIT License](LICENSE). Open source, transparent, and free from tracking.
 
 ---
 
