@@ -23,13 +23,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     let editState = { s: 1, e: 1 };
 
     // Fill Dropdowns
-    for (let i = 1; i <= 20; i++) {
+    for (let i = 1; i <= 30; i++) {
         const opt = document.createElement('option');
         opt.value = `S${i}`;
         opt.textContent = `Season ${i}`;
         seasonSelect.appendChild(opt);
     }
-    for (let i = 1; i <= 50; i++) {
+    for (let i = 1; i <= 100; i++) {
         const opt = document.createElement('option');
         opt.value = `E${i}`;
         opt.textContent = `Episode ${i}`;
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeModalBtn.onclick = () => {
         modalOverlay.classList.add('hidden');
         addShowForm.reset();
-        fileNameDisplay.textContent = "No file selected";
+        fileNameDisplay.textContent = "No poster selected";
         currentImageBlob = null;
     };
 
@@ -70,14 +70,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderShows();
     };
 
-    // Quick Progress Logic
+    // Quick Progress Logic with Auto-Reset
     const updateDisplay = () => {
         editSVal.textContent = editState.s;
         editEVal.textContent = editState.e;
     };
 
-    document.getElementById('edit-s-plus').onclick = () => { editState.s++; updateDisplay(); };
-    document.getElementById('edit-s-minus').onclick = () => { if(editState.s > 1) editState.s--; updateDisplay(); };
+    document.getElementById('edit-s-plus').onclick = () => { 
+        editState.s++; 
+        editState.e = 1; // Auto-reset episode when season moves up
+        updateDisplay(); 
+    };
+    document.getElementById('edit-s-minus').onclick = () => { 
+        if(editState.s > 1) {
+            editState.s--; 
+            editState.e = 1; // Auto-reset episode when season moves down
+        }
+        updateDisplay(); 
+    };
     document.getElementById('edit-e-plus').onclick = () => { editState.e++; updateDisplay(); };
     document.getElementById('edit-e-minus').onclick = () => { if(editState.e > 1) editState.e--; updateDisplay(); };
 
@@ -96,7 +106,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         editOverlay.classList.add('hidden');
     };
 
-    // Quick Image Logic
     quickImageInput.onchange = async (e) => {
         const file = e.target.files[0];
         if (file && editTargetId) {
@@ -119,16 +128,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.className = 'card';
             const imageUrl = show.image ? URL.createObjectURL(show.image) : '';
 
+            // Layout using "Watch Next" logic
             card.innerHTML = `
                 <div class="card-img-container">
-                    ${show.image ? `<img src="${imageUrl}" class="card-img">` : '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#333;">No Image</div>'}
-                    <button class="img-overlay-btn">📷</button>
+                    ${show.image ? `<img src="${imageUrl}" class="card-img">` : '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#333; font-size:0.8rem;">NO POSTER</div>'}
+                    <button class="img-overlay-btn" title="Change Poster">📷</button>
                 </div>
                 <div class="card-content">
+                    <div class="watch-label">Watch Next</div>
                     <h3 class="card-title">${show.title}</h3>
                     <div class="card-meta">
-                        <span class="meta-text">${show.season} • ${show.episode}</span>
-                        <button class="btn-delete" data-id="${show.id}">REMOVE</button>
+                        <span class="meta-text">${show.season} • EP ${show.episode.replace('E','')}</span>
+                        <button class="btn-delete" data-id="${show.id}">Remove</button>
                     </div>
                 </div>
             `;
@@ -138,10 +149,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 img.onload = () => URL.revokeObjectURL(imageUrl);
             }
 
-            // Bind Actions
-            card.querySelector('.btn-delete').onclick = async () => {
-                await dbService.deleteShow(show.id);
-                renderShows();
+            card.querySelector('.btn-delete').onclick = async (e) => {
+                e.stopPropagation();
+                if(confirm('Remove this show?')) {
+                    await dbService.deleteShow(show.id);
+                    renderShows();
+                }
             };
 
             card.querySelector('.meta-text').onclick = () => {
@@ -152,7 +165,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 editOverlay.classList.remove('hidden');
             };
 
-            card.querySelector('.img-overlay-btn').onclick = () => {
+            card.querySelector('.img-overlay-btn').onclick = (e) => {
+                e.stopPropagation();
                 editTargetId = show.id;
                 quickImageInput.click();
             };
